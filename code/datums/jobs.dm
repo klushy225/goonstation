@@ -1921,6 +1921,24 @@ ABSTRACT_TYPE(/datum/job/special/halloween)
 	slot_poc1 = list(/obj/item/shaker/ketchup)
 	slot_poc2 = list(/obj/item/shaker/mustard)
 
+/datum/job/special/halloween/NTSnO
+	name = "Nanotrasen Sanitation Operative"
+	wages = PAY_TRADESMAN
+	access_string = "janitor"
+	limit = 1
+	slot_head = list(/obj/item/clothing/head/janiberet)
+	slot_ears = list(/obj/item/device/radio/headset/command/nt/consultant) //needs their own secret channel
+	slot_back = list(/obj/item/storage/backpack/NT)
+	slot_foot = list(/obj/item/clothing/shoes/swat)
+	slot_jump = list(/obj/item/clothing/under/misc/turds)
+	slot_card = /obj/item/card/id/nt_specialist
+	slot_poc1 = list(/obj/item/device/pda2/ntofficial)
+	slot_mask = list(/obj/item/clothing/mask/gas/NTSO)
+	slot_belt = list(/obj/item/storage/belt/security/ntsno)
+	slot_foot = list(/obj/item/clothing/shoes/galoshes)
+	slot_glov = list(/obj/item/clothing/gloves/long)
+	items_in_backpack = list(/obj/item/reagent_containers/glass/bucket, /obj/item/lamp_manufacturer/organic)
+
 /datum/job/special/halloween/godzilla
 	name = "Discount Godzilla"
 	wages = PAY_UNTRAINED
