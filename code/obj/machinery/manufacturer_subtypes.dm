@@ -281,6 +281,8 @@
 		/datum/manufacture/chembarrel/red,
 		/datum/manufacture/condenser,
 		/datum/manufacture/fractionalcondenser,
+		/datum/manufacture/dropper_funnel,
+		/datum/manufacture/portable_dispenser,
 		/datum/manufacture/beaker_lid_box,
 		/datum/manufacture/bunsen_burner,
 		/datum/manufacture/spectrogoggles,
@@ -448,12 +450,12 @@
 		/datum/manufacture/satchel,
 		/datum/manufacture/satchel_red,
 		/datum/manufacture/satchel_green,
-		/datum/manufacture/satchel_blue)
+		/datum/manufacture/satchel_blue,
+		/datum/manufacture/handkerchief)
 
 	hidden = list(/datum/manufacture/breathmask,
 		/datum/manufacture/patch,
 		/datum/manufacture/towel,
-		/datum/manufacture/handkerchief,
 		/datum/manufacture/tricolor,
 		/datum/manufacture/hat_ltophat)
 
@@ -548,7 +550,8 @@
 		/datum/manufacture/hat_green,
 		/datum/manufacture/hat_blue,
 		/datum/manufacture/hat_purple,
-		/datum/manufacture/hat_tophat)
+		/datum/manufacture/hat_tophat,
+		/datum/manufacture/handkerchief,)
 
 	hidden = list(/datum/manufacture/id_card_gold,
 		/datum/manufacture/implant_access_infinite,

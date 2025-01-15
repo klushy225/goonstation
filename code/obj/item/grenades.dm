@@ -1134,7 +1134,7 @@ ADMIN_INTERACT_PROCS(/obj/item/gimmickbomb, proc/arm, proc/detonate)
 			var/area/t = get_area(M)
 			if(t?.sanctuary) continue
 			SPAWN(0)
-				M.become_statue(getMaterial("gold"))
+				M.become_statue("gold")
 		..()
 
 
@@ -1384,6 +1384,7 @@ ADMIN_INTERACT_PROCS(/obj/item/gimmickbomb, proc/arm, proc/detonate)
 						src.boom()
 						return
 				else
+					message_ghosts("[src] has been attached at [log_loc(target, ghostjump=TRUE)].")
 					boutput(user, SPAN_ALERT("You slap the charge on [target], [det_time/10] seconds!"))
 					user.visible_message(SPAN_ALERT("[user] has attached [src] to [target]."))
 					src.icon_state = "bcharge2"
@@ -1400,9 +1401,6 @@ ADMIN_INTERACT_PROCS(/obj/item/gimmickbomb, proc/arm, proc/detonate)
 					SPAWN(src.det_time)
 						if (src)
 							src.boom()
-							if (target)
-								if (istype(target, /obj/machinery))
-									target.ex_act(1) // Reliably blasts through doors.
 						return
 		return
 
@@ -1452,14 +1450,20 @@ ADMIN_INTERACT_PROCS(/obj/item/gimmickbomb, proc/arm, proc/detonate)
 					if (prob(max(0, 100 - (window.health / 3))))
 						window.smash()
 					continue
-				if (istype(O, /obj/grille))
-					var/obj/grille/grille = O
+				if (istype(O, /obj/mesh/grille))
+					var/obj/mesh/grille/grille = O
 					if (!grille.ruined)
 						grille.ex_act(2)
 					continue
 				if (istype(O, /obj/machinery/door/firedoor))
 					var/obj/machinery/door/firedoor/firelock = O
 					qdel(firelock)
+					continue
+				if (istype(O, /obj/machinery/door))
+					O.ex_act(1)
+					continue
+				if (istype(O, /obj/storage))
+					O.ex_act(2)
 					continue
 		qdel(src)
 		return
@@ -1505,6 +1509,7 @@ ADMIN_INTERACT_PROCS(/obj/item/gimmickbomb, proc/arm, proc/detonate)
 						src.boom()
 						return
 				else
+					message_ghosts("[src] has been attached at [log_loc(target, ghostjump=TRUE)].")
 					boutput(user, SPAN_ALERT("You slap the charge on [target], [det_time/10] seconds!"))
 					user.visible_message(SPAN_ALERT("[user] has attached [src] to [target]."))
 					src.icon_state = "bcharge2"
@@ -1580,8 +1585,8 @@ ADMIN_INTERACT_PROCS(/obj/item/gimmickbomb, proc/arm, proc/detonate)
 					if (prob(max(0, 100 - (window.health / 3))))
 						window.damage_heat(500)
 					continue
-				if (istype(O, /obj/grille))
-					var/obj/grille/grille = O
+				if (istype(O, /obj/mesh/grille))
+					var/obj/mesh/grille/grille = O
 					if (!grille.ruined)
 						grille.damage_heat(500)
 					continue
@@ -2095,7 +2100,7 @@ ADMIN_INTERACT_PROCS(/obj/item/pipebomb/bomb, proc/arm)
 				if (rcd > 1)
 					for (var/turf/T in view(3,src.loc))
 						if (prob(rcd * 10))
-							new /obj/grille/steel(T)
+							new /obj/mesh/grille/steel(T)
 
 			if (plasma)
 				for (var/turf/simulated/floor/target in range(1,src.loc))

@@ -281,6 +281,7 @@ ADMIN_INTERACT_PROCS(/obj/storage/secure/closet, proc/break_open)
 	name = "\improper Research Director's locker"
 	req_access = list(access_research_director)
 	spawn_contents = list(/obj/item/plant/herb/cannabis/spawnable,
+	/obj/item/disk/data/floppy/manudrive/aiLaws,
 	/obj/item/device/light/zippo,
 	/obj/item/storage/box/clothing/research_director,
 	/obj/item/clothing/shoes/brown,
@@ -294,7 +295,9 @@ ADMIN_INTERACT_PROCS(/obj/storage/secure/closet, proc/break_open)
 	/obj/item/clothing/suit/labcoat,
 	/obj/item/device/radio/headset/command/rd,
 	/obj/item/pet_carrier,
-	/obj/item/device/pda2/research_director)
+	/obj/item/device/pda2/research_director,
+	/obj/item/places_pipes,
+	/obj/item/rcd_ammo/big)
 
 	make_my_stuff()
 		if (..()) // make_my_stuff is called multiple times due to lazy init, so the parent returns 1 if it actually fired and 0 if it already has
@@ -348,6 +351,7 @@ ADMIN_INTERACT_PROCS(/obj/storage/secure/closet, proc/break_open)
 		/obj/item/storage/toolbox/mechanical/yellow_tools,
 		/obj/item/storage/box/misctools,
 		/obj/item/extinguisher,
+		/obj/item/pet_carrier,
 		/obj/item/device/pda2/chiefengineer,
 	#ifdef MAP_OVERRIDE_OSHAN
 		/obj/item/clothing/shoes/stomp_boots,
@@ -381,6 +385,7 @@ ADMIN_INTERACT_PROCS(/obj/storage/secure/closet, proc/break_open)
 		/obj/item/extinguisher,
 		/obj/item/clothing/suit/space/light/engineer,
 		/obj/item/clothing/head/helmet/space/light/engineer,
+		/obj/item/device/pda2/chiefengineer
 	)
 
 /* ==================== */
@@ -866,6 +871,9 @@ ADMIN_INTERACT_PROCS(/obj/storage/secure/closet, proc/break_open)
 /obj/storage/secure/closet/civilian/ranch
 	name = "\improper Rancher supplies locker"
 	req_access = list(access_ranch)
+	icon_state = "secure_green"
+	icon_closed = "secure_green"
+	icon_opened = "secure_green-open"
 	spawn_contents = list(/obj/item/paper/ranch_guide,\
 	/obj/item/fishing_rod/basic,\
 	/obj/item/storage/box/clothing/rancher,\

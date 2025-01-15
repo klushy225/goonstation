@@ -184,7 +184,13 @@
 		if (!src.announcement_radio)
 			src.announcement_radio = new(src)
 
-		var/message = replacetext(replacetext(replacetext(src.arrivalalert, "$STATION", "[station_name()]"), "$JOB", person.mind.assigned_role), "$NAME", person.real_name)
+		var/job = person.mind.assigned_role
+		if(!job || job == "MODE")
+			job = "Staff Assistant"
+		if(issilicon(person) && !isAI(person))
+			job = "Cyborg"
+
+		var/message = replacetext(replacetext(replacetext(src.arrivalalert, "$STATION", "[station_name()]"), "$JOB", job), "$NAME", person.real_name)
 		message = replacetext(replacetext(replacetext(message, "$THEY", "[he_or_she(person)]"), "$THEM", "[him_or_her(person)]"), "$THEIR", "[his_or_her(person)]")
 
 		var/list/messages = process_language(message)
@@ -199,8 +205,9 @@
 		var/job = person.mind.assigned_role
 		if(!job || job == "MODE")
 			job = "Staff Assistant"
-		if(issilicon(person))
+		if(issilicon(person) && !isAI(person))
 			job = "Cyborg"
+
 		var/message = replacetext(replacetext(replacetext(src.departurealert, "$STATION", "[station_name()]"), "$JOB", job), "$NAME", person.real_name)
 		message = replacetext(replacetext(replacetext(message, "$THEY", "[he_or_she(person)]"), "$THEM", "[him_or_her(person)]"), "$THEIR", "[his_or_her(person)]")
 
@@ -219,6 +226,7 @@
 		req_access = list(access_heads)
 		name = "Bridge Announcement Computer"
 		announces_arrivals = 1
+		circuit_type = /obj/item/circuitboard/announcement/bridge
 
 	captain
 		req_access = list(access_captain)
@@ -228,32 +236,39 @@
 	security
 		req_access = list(access_maxsec)
 		name = "Security Announcement Computer"
+		area_name = "Security"
 		circuit_type = /obj/item/circuitboard/announcement/security
 
 	research
 		req_access = list(access_research_director)
 		name = "Research Announcement Computer"
+		area_name = "Research"
 		circuit_type = /obj/item/circuitboard/announcement/research
 
 	medical
 		req_access = list(access_medical_director)
 		name = "Medical Announcement Computer"
+		area_name = "Medical"
 		circuit_type = /obj/item/circuitboard/announcement/medical
 
 	engineering
 		req_access = list(access_engineering_chief)
 		name = "Engineering Announcement Computer"
+		area_name = "Engineering"
 		circuit_type = /obj/item/circuitboard/announcement/engineering
-
-	cargo
-		req_access = list(access_cargo)
-		name = "QM Announcement Computer"
-		circuit_type = /obj/item/circuitboard/announcement/cargo
 
 	ai
 		req_access = list(access_ai_upload)
 		name = "AI Announcement Computer"
 		circuit_type = /obj/item/circuitboard/announcement/ai
+
+	cargo
+		req_access = list(access_cargo)
+		name = "QM Announcement Computer"
+		area_name = "Cargo"
+		sound_to_play = 'sound/misc/bingbong.ogg'
+		sound_volume = 70
+		circuit_type = /obj/item/circuitboard/announcement/cargo
 
 	catering
 		req_access = list(access_bar, access_kitchen)
@@ -274,10 +289,12 @@
 	name = "Syndicate Announcement computer"
 	theme = "syndicate"
 	icon_state = "announcementsyndie"
+	area_name = "Syndicate"
 	req_access = list(access_syndicate_shuttle)
 	circuit_type = /obj/item/circuitboard/announcement/syndicate
 
 	commander
+		area_name = null
 		req_access = list(access_syndicate_commander)
 
 	console
@@ -294,6 +311,7 @@
 	sound_to_play = 'sound/machines/announcement_clown.ogg'
 	override_font = "Comic Sans MS"
 	desc = "A bootleg announcement computer. Only accepts official Chips Ahoy brand clown IDs."
+	sound_volume = 50
 
 	send_message(mob/user, message)
 		. = ..()
@@ -311,10 +329,10 @@
 					S?["mi_crim"] = "Making a very irritating announcement."
 
 					clown.update_burning(15) // placed here since update_burning is only for mob/living
-				if(ID)
-					user.put_in_hand_or_eject(ID)
+				if(src.ID)
+					user.put_in_hand_or_eject(src.ID)
 
-				if (emagged)
+				if (src.emagged)
 					var/turf/T = get_turf(src.loc)
 					if(T)
 						src.visible_message("<b>The clown on the screen laughs as the [src] explodes!</b>")
@@ -333,13 +351,13 @@
 		..()
 		switch(action)
 			if ("id")
-				if ( ID.icon_state != "id_clown")
+				if (src.ID && (src.ID.icon_state != "id_clown"))
 					src.unlocked = 0 // clowns ONLY
 					update_status()
 
 
 	emag_act(mob/user, obj/item/card/emag/E)
-		if (!emagged)
+		if (!src.emagged)
 			src.visible_message(SPAN_ALERT("<B>The clown on the screen grins in horrid delight!</B>"))
-		emagged = TRUE
+		src.emagged = TRUE
 

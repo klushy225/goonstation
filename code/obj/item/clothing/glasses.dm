@@ -478,6 +478,9 @@ TYPEINFO(/obj/item/clothing/glasses/visor)
 					if (S.is_inspector)
 						newscuttle.make_inspector()
 			boutput(user, "You stuff the goggles back into the detgadget hat. It powers down with a low whirr.")
+			for(var/obj/item/photo/P in S.contents)
+				P.set_loc(get_turf(src))
+
 			S.drop_item()
 			qdel(S)
 			qdel(src)
@@ -741,6 +744,7 @@ TYPEINFO(/obj/item/clothing/glasses/nightvision/sechud/flashblocking)
 		.["frequency"] = src.freq
 
 	ui_act(action, list/params, datum/tgui/ui, datum/ui_state/state)
+		. = ..()
 		if (action == "set-frequency" && params["finish"])
 			var/old_freq = src.freq
 			src.freq = sanitize_frequency_diagnostic(params["value"])

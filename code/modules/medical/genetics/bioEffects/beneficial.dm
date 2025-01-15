@@ -530,11 +530,13 @@
 
 	OnAdd()
 		radio_brains[owner] = power
+		. = ..()
 
 	onPowerChange(oldval, newval)
 		radio_brains[owner] = newval
 
 	OnRemove()
+		. = ..()
 		radio_brains -= owner
 
 var/list/radio_brains = list()
@@ -584,6 +586,7 @@ var/list/radio_brains = list()
 		..()
 
 	OnRemove()
+		. = ..()
 		REMOVE_MOVEMENT_MODIFIER(owner, /datum/movement_modifier/hulkstrong, src.type)
 		if (ishuman(owner) && src.visible)
 			var/mob/living/carbon/human/H = owner
@@ -800,6 +803,8 @@ var/list/radio_brains = list()
 	effect_group = "blood"
 
 	OnLife(var/mult)
+		if (..())
+			return
 		if (isliving(owner))
 			var/mob/living/L = owner
 
@@ -825,6 +830,8 @@ var/list/radio_brains = list()
 	var/right_arm_path = /obj/item/parts/human_parts/arm/right/claw/critter
 
 	OnLife(var/mult)
+		if (..())
+			return
 		if (ishuman(owner))
 			var/mob/living/carbon/human/M = owner
 
@@ -927,6 +934,8 @@ var/list/radio_brains = list()
 	var/lost_perc = 70
 
 	OnLife(var/mult)
+		if (..())
+			return
 		if (ishuman(owner))
 			var/mob/living/carbon/human/H = owner
 
@@ -1008,6 +1017,8 @@ var/list/radio_brains = list()
 	icon_state  = "haze"
 
 	OnLife(var/mult)
+		if (..())
+			return
 		if (probmult(20))
 			src.active = !src.active
 		if (src.active)
@@ -1040,9 +1051,9 @@ var/list/radio_brains = list()
 		if (ishuman(owner))
 			var/mob/living/carbon/human/M = owner
 			if (M.AH_we_spawned_with)
-				M.bioHolder.mobAppearance.customizations["hair_bottom"].color 	= M.AH_we_spawned_with.customizations["hair_bottom"].color
-				M.bioHolder.mobAppearance.customizations["hair_middle"].color 	= M.AH_we_spawned_with.customizations["hair_middle"].color
-				M.bioHolder.mobAppearance.customizations["hair_top"].color 	= M.AH_we_spawned_with.customizations["hair_top"].color
+				M.bioHolder.mobAppearance.customizations["hair_bottom"].color 	= fix_colors(M.AH_we_spawned_with.customizations["hair_bottom"].color)
+				M.bioHolder.mobAppearance.customizations["hair_middle"].color 	= fix_colors(M.AH_we_spawned_with.customizations["hair_middle"].color)
+				M.bioHolder.mobAppearance.customizations["hair_top"].color 	= fix_colors(M.AH_we_spawned_with.customizations["hair_top"].color)
 				M.bioHolder.mobAppearance.customizations["hair_bottom"].style 			= M.AH_we_spawned_with.customizations["hair_bottom"].style
 				M.bioHolder.mobAppearance.customizations["hair_middle"].style 			= M.AH_we_spawned_with.customizations["hair_middle"].style
 				M.bioHolder.mobAppearance.customizations["hair_top"].style 			= M.AH_we_spawned_with.customizations["hair_top"].style
@@ -1050,13 +1061,15 @@ var/list/radio_brains = list()
 			M.hair_override = 1
 			M.bioHolder.mobAppearance.UpdateMob()
 			M.update_colorful_parts()
-		..()
+		. = ..()
 
 	OnRemove()
+		. = ..()
+		if (!.)
+			return
 		if (ishuman(owner))
 			var/mob/living/carbon/human/M = owner
 
 			M.hair_override = 0
 			M.bioHolder.mobAppearance.UpdateMob()
 			M.update_colorful_parts()
-		..()

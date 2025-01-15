@@ -278,7 +278,7 @@ ADMIN_INTERACT_PROCS(/obj/machinery/light, proc/broken, proc/admin_toggle, proc/
 
 	bullet_act(obj/projectile/P)
 		. = ..()
-		src.do_break()
+		src.broken(explode_rigged = TRUE)
 
 //big standing lamps
 /obj/machinery/light/flamp
@@ -553,15 +553,22 @@ ADMIN_INTERACT_PROCS(/obj/machinery/light, proc/broken, proc/admin_toggle, proc/
 				icon_state = "floor-broken"
 				on = 0
 
+///This type hell is already baked into a lot of maps so this macro exists to make it less insane
+#define DEFINE_DELAYS(_PATH)\
+_PATH/delay2{icon_state = "runway20"; base_state = "runway2"}\
+_PATH/delay3{icon_state = "runway30"; base_state = "runway3"}\
+_PATH/delay4{icon_state = "runway40"; base_state = "runway4"}\
+_PATH/delay5{icon_state = "runway50"; base_state = "runway5"}
+
 /obj/machinery/light/traffic_light
 	name = "warning light"
-	desc = "A small light used to warn when shuttle traffic is expected."
+	desc = "A small, hardened light used to warn when shuttle traffic is expected."
 	icon_state = "runway10"
 	base_state = "runway1"
 	fitting = "bulb"
 	brightness = 0.5
-	light_type = /obj/item/light/bulb
-	allowed_type = /obj/item/light/bulb
+	light_type = /obj/item/light/bulb/runway/traffic
+	allowed_type = /obj/item/light/bulb/runway/traffic
 	plane = PLANE_NOSHADOW_BELOW
 	on = 0
 	wallmounted = 0
@@ -575,6 +582,10 @@ ADMIN_INTERACT_PROCS(/obj/machinery/light, proc/broken, proc/admin_toggle, proc/
 		if(src.connected_dock)
 			RegisterSignal(GLOBAL_SIGNAL, src.connected_dock, PROC_REF(dock_signal_handler))
 
+	ex_act(severity)
+		if(severity == 1)
+			..()
+
 	proc/dock_signal_handler(datum/holder, var/signal)
 		switch(signal)
 			if(DOCK_EVENT_INCOMING)
@@ -587,45 +598,73 @@ ADMIN_INTERACT_PROCS(/obj/machinery/light, proc/broken, proc/admin_toggle, proc/
 				src.deactivate()
 
 	proc/activate()
-		color = warning_color
-		on = 1
-		update()
+		src.color = warning_color
+		src.on = TRUE
+		src.update()
 
 	proc/deactivate()
-		color = null
-		on = 0
-		update()
+		src.color = null
+		src.on = FALSE
+		src.update()
 
-	trader_left // matching mapping area convensions
-		connected_dock = COMSIG_DOCK_TRADER_WEST
+	// matching mapping area conventions
+/obj/machinery/light/traffic_light/trader_left
+	connected_dock = COMSIG_DOCK_TRADER_WEST
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/trader_left)
 
-		delay2
-			icon_state = "runway20"
-			base_state = "runway2"
-		delay3
-			icon_state = "runway30"
-			base_state = "runway3"
-		delay4
-			icon_state = "runway40"
-			base_state = "runway4"
-		delay5
-			icon_state = "runway50"
-			base_state = "runway5"
+/obj/machinery/light/traffic_light/trader_right
+	connected_dock = COMSIG_DOCK_TRADER_EAST
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/trader_right)
 
-	trader_right
-		connected_dock = COMSIG_DOCK_TRADER_EAST
-		delay2
-			icon_state = "runway20"
-			base_state = "runway2"
-		delay3
-			icon_state = "runway30"
-			base_state = "runway3"
-		delay4
-			icon_state = "runway40"
-			base_state = "runway4"
-		delay5
-			icon_state = "runway50"
-			base_state = "runway5"
+/obj/machinery/light/traffic_light/trader_diner
+	connected_dock = COMSIG_DOCK_TRADER_DINER
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/trader_diner)
+
+/obj/machinery/light/traffic_light/mining_station
+	connected_dock = COMSIG_DOCK_MINING_STATION
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/mining_station)
+
+/obj/machinery/light/traffic_light/mining_diner
+	connected_dock = COMSIG_DOCK_MINING_DINER
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/mining_diner)
+
+/obj/machinery/light/traffic_light/mining_outpost
+	connected_dock = COMSIG_DOCK_MINING_OUTPOST
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/mining_outpost)
+
+/obj/machinery/light/traffic_light/john_owlery
+	connected_dock = COMSIG_DOCK_JOHN_OWLERY
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/john_owlery)
+
+/obj/machinery/light/traffic_light/john_diner
+	connected_dock = COMSIG_DOCK_JOHN_DINER
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/john_diner)
+
+/obj/machinery/light/traffic_light/john_outpost
+	connected_dock = COMSIG_DOCK_JOHN_OUTPOST
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/john_outpost)
+
+/obj/machinery/light/traffic_light/research_station
+	connected_dock = COMSIG_DOCK_RESEARCH_STATION
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/research_station)
+
+/obj/machinery/light/traffic_light/research_outpost
+	connected_dock = COMSIG_DOCK_RESEARCH_OUTPOST
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/research_outpost)
+
+/obj/machinery/light/traffic_light/medical_asylum
+	connected_dock = COMSIG_DOCK_MEDICAL_ASYLUM
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/medical_asylum)
+
+/obj/machinery/light/traffic_light/medical_medbay
+	connected_dock = COMSIG_DOCK_MEDICAL_MEDBAY
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/medical_medbay)
+
+/obj/machinery/light/traffic_light/medical_pathology
+	connected_dock = COMSIG_DOCK_MEDICAL_PATHOLOGY
+DEFINE_DELAYS(/obj/machinery/light/traffic_light/medical_pathology)
+
+#undef DEFINE_DELAYS
 
 // Traffic lights on/off is signal controlled; light switches should not affect us.
 /obj/machinery/light/traffic_light/power_change()
@@ -1154,7 +1193,7 @@ ADMIN_INTERACT_PROCS(/obj/machinery/light, proc/broken, proc/admin_toggle, proc/
 
 // break the light and make sparks if was on
 
-/obj/machinery/light/proc/broken(var/nospark = 0)
+/obj/machinery/light/proc/broken(var/nospark = 0, explode_rigged = FALSE)
 	set name = "Break"
 
 	if(current_lamp.light_status == LIGHT_EMPTY || current_lamp.light_status == LIGHT_BROKEN)
@@ -1167,6 +1206,14 @@ ADMIN_INTERACT_PROCS(/obj/machinery/light, proc/broken, proc/admin_toggle, proc/
 		if(on)
 			logTheThing(LOG_STATION, null, "Light '[name]' was on and has been broken, spewing sparks everywhere ([log_loc(src)])")
 			elecflash(src,radius = 1, power = 2, exclude_center = 0)
+
+	if(explode_rigged && current_lamp.rigged)
+		if (current_lamp.rigger)
+			message_admins("[key_name(current_lamp.rigger)]'s rigged bulb exploded in [src.loc.loc], [log_loc(src)].")
+			logTheThing(LOG_COMBAT, current_lamp.rigger, "'s rigged bulb exploded in [current_lamp.rigger.loc.loc] ([log_loc(src)])")
+		explode()
+		return
+
 	current_lamp.light_status = LIGHT_BROKEN
 	current_lamp.update()
 	SPAWN(0)
@@ -1650,6 +1697,12 @@ TYPEINFO(/obj/item/light)
 
 	runway
 		burnprob = 0
+
+		traffic
+			color_r = 1
+			color_g = 0.67
+			color_b = 0.67
+
 
 /obj/item/light/big_bulb
 	name = "beacon bulb"

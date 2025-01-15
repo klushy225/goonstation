@@ -532,7 +532,7 @@ TYPEINFO(/obj/item/sword/pink/angel)
 	flags = TABLEPASS | NOSHIELD | USEDELAY
 	tool_flags = TOOL_CUTTING
 	desc = "Gets the blood to run out juuuuuust right. Looks like this could be nasty when thrown."
-	burn_type = 1
+	burn_remains = BURN_REMAINS_MELT
 	stamina_damage = 15
 	stamina_cost = 5
 	stamina_crit_chance = 50
@@ -737,7 +737,7 @@ TYPEINFO(/obj/item/sword/pink/angel)
 	w_class = W_CLASS_SMALL
 	flags = TABLEPASS | NOSHIELD | USEDELAY
 	desc = "An ancient and questionably effective weapon."
-	burn_type = 0
+	burn_remains = BURN_REMAINS_ASH
 	stamina_damage = 45
 	stamina_cost = 20
 	stamina_crit_chance = 60
@@ -2129,6 +2129,65 @@ obj/item/whetstone
 #undef HALB_HEAVY_STAMCOST
 #undef HALB_MED_STAMCOST
 #undef HALB_LIGHT_STAMCOST
+
+/obj/item/crashaxe
+	name = "crash axe"
+	desc = "A lightweight utility-survival axe designed to cut through pod hulls and other structures. Works just as well on bothersome crewmembers."
+	icon = 'icons/obj/items/weapons.dmi'
+	icon_state = "crashaxe"
+	inhand_image_icon = 'icons/mob/inhand/hand_weapons.dmi'
+	hitsound ='sound/impact_sounds/coconut_break.ogg' //shamelessly re-using this sound idea from my halberd
+
+	health = 5 //same item health as most tools
+	tool_flags = TOOL_CUTTING | TOOL_CHOPPING
+
+	w_class = W_CLASS_SMALL
+	hit_type = DAMAGE_CUT
+	force = 13
+	stamina_damage = 25
+	throwforce = 21
+	throw_speed = 4
+	throw_range = 7
+
+	var/breakmode = TRUE
+	var/breaking_tool_flags = TOOL_CUTTING | TOOL_CHOPPING
+	var/prying_tool_flags = TOOL_CUTTING | TOOL_PRYING
+
+	HELP_MESSAGE_OVERRIDE({"Can be used in hand to toggle it between a prying and chopping tool. Throw the weapon to inflict a very short stun."})
+
+	New()
+		..()
+		src.setItemSpecial(/datum/item_special/simple)
+		BLOCK_SETUP(BLOCK_ROD)
+
+	// I refuse to add to the item/knife/butcher inheritance tree. I just won't do it.
+	throw_impact(atom/A, datum/thrown_thing/thr)
+		if(iscarbon(A))
+			var/mob/living/carbon/C = A
+
+			C.changeStatus("knockdown", 2 SECONDS) //stun is meant to give an opportunity to sneak in and steal weapons, not for rampaging
+			C.changeStatus("disorient", 4 SECONDS)
+			C.force_laydown_standup()
+			playsound(src, 'sound/impact_sounds/Flesh_Stab_3.ogg', 40, TRUE)
+
+		..()
+
+	attack_self(mob/user)
+		if(breakmode)
+			breakmode = FALSE
+			src.tool_flags = prying_tool_flags
+			icon_state = "crashaxe-rev"
+			boutput(user, SPAN_NOTICE("You adjust your grip on [src], readying it to pry."))
+			src.setItemSpecial(/datum/item_special/tile_fling)
+			hit_type = DAMAGE_STAB
+
+		else
+			breakmode = TRUE
+			src.tool_flags = breaking_tool_flags
+			icon_state = "crashaxe"
+			boutput(user, SPAN_NOTICE("You adjust your grip on [src], readying it to break stuff."))
+			src.setItemSpecial(/datum/item_special/simple)
+			hit_type = DAMAGE_CUT
 
 /obj/item/swords/sord
 	name = "gross sord"
